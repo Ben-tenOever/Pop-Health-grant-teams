@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathology Grant Teams</title>
+<link rel="stylesheet" href="teams.css">
+<style id="term-pill-style">
+  .pill-link {
+    background: var(--nyu-purple);
+    color: #fff !important;
+    border: 1px solid var(--nyu-purple);
+    text-decoration: none !important;
+    display: inline-block;
+  }
+  .pill-link:hover { opacity: 0.9; }
+  .ov-title, .ov-subtitle { color: var(--nyu-purple); }
+</style>
+</head><body>
+<header>
+  <h1>AI Grant and Collaboration Initiative</h1>
+  <p>Department of Pathology  NYU Grossman School of Medicine</p>
+</header>
+
+<nav>
+
+  <a href="index.html" aria-current="page">Home</a>
+  <a href="faculty.html">Faculty profiles</a>
+  <a href="teams_two.html">Pairs</a>
+  <a href="teams_three_plus.html">Teams of three or more</a>
+  <a href="resources.html">Resources and model systems</a>
+  <a href="approaches.html">Experimental approaches</a>
+</nav>
+
+<main class="container">
+<section class="card" id="group-overview" style="padding:16px; margin-top:12px;">
+  <div style="font-weight:700; font-size:1.05rem;" class="ov-title">About this group</div>
+  <div id="group-overview-text" style="margin-top:10px; opacity:.9; line-height:1.45;"></div>
+
+  <div style="margin-top:14px; display:flex; gap:16px; flex-wrap:wrap;">
+    <div><span style="opacity:.7;">Faculty:</span> <span id="stat-faculty"></span></div>
+    <div><span style="opacity:.7;">Pairs:</span> <span id="stat-pairs"></span></div>
+    <div><span style="opacity:.7;">3+ teams:</span> <span id="stat-teams"></span></div>
+    <div><span style="opacity:.7;">Opportunities covered:</span> <span id="stat-opps"></span></div>
+  </div>
+
+  <div style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px;">
+    <div>
+      <div style="font-weight:650;" class="ov-subtitle">Top themes</div>
+      <div id="themes" style="margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;"></div>
+    </div>
+    <div>
+      <div style="font-weight:650;" class="ov-subtitle">Common approaches</div>
+      <div id="approaches" style="margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  function esc(s){
+    s = String(s == null ? "" : s);
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+  }
+  fetch("data/group_overview.json?cb=" + Date.now(), { cache: "no-store" })
+    .then(r => { if (!r.ok) throw new Error("Failed to load group_overview.json: " + r.status); return r.json(); })
+    .then(d => {
+      document.getElementById("group-overview-text").innerHTML = esc(d.overview || "");
+      document.getElementById("stat-faculty").textContent = d.stats && d.stats.faculty_count != null ? d.stats.faculty_count : "";
+      document.getElementById("stat-pairs").textContent = d.stats && d.stats.pairs_count != null ? d.stats.pairs_count : "";
+      document.getElementById("stat-teams").textContent = d.stats && d.stats.teams3plus_count != null ? d.stats.teams3plus_count : "";
+      document.getElementById("stat-opps").textContent = d.stats && d.stats.opportunities_covered != null ? d.stats.opportunities_covered : "";
+
+      function pills(el, items){
+  el.innerHTML = (items || []).slice(0,10).map(function(x){
+    var term = encodeURIComponent(x);
+    return '<a class="pill pill-link" href="faculty_term.html?term=' + term + '">' + esc(x) + '</a>';
+  }).join("");
+}
+      pills(document.getElementById("themes"), d.top_themes);
+      pills(document.getElementById("approaches"), d.top_approaches);
+    })
+    .catch(err => {
+      document.getElementById("group-overview-text").textContent = String(err);
+    });
+})();
+</script>
+
+  <h1>Pathology team builder</h1>
+  <p>Browse faculty profiles and explore suggested pairs and teams of three or more generated from the Pathology roster.</p>
+  <div class="grid">
+    <a class="card" href="faculty.html">Faculty profiles</a>
+    <a class="card" href="teams_two.html">Pairs</a>
+    <a class="card" href="teams_three_plus.html">Teams of three or more</a>
+  </div>
+</main>
+</body></html>

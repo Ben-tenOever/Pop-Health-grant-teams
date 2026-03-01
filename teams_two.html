@@ -1,0 +1,54 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pathology Pairs</title><link rel="stylesheet" href="teams.css">
+</head><body>
+<header>
+  <h1>Pathology Grant Teams</h1>
+  <p>NYU Grossman School of Medicine</p>
+</header>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="faculty.html">Faculty profiles</a>
+  <a href="teams_two.html">Pairs</a>
+  <a href="teams_three_plus.html">Teams of three or more</a>
+  <a href="resources.html">Resources and model systems</a>
+  <a href="approaches.html">Experimental approaches</a>
+</nav>
+<main class="container">
+  <h2>Pairs</h2>
+  <div id="teams"></div>
+</main>
+<script>(function(){function esc(s){s=String(s==null?"":s);return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+function loadJson(path, cb){
+  var x=new XMLHttpRequest();
+  x.open("GET",path+"?cb="+Date.now(),true);
+  x.onreadystatechange=function(){
+    if(x.readyState!==4)return;
+    if(x.status<200||x.status>=300)return cb(new Error("Failed "+path+" "+x.status));
+    try{cb(null,JSON.parse(x.responseText));}catch(e){cb(new Error("Parse "+path+" "+e));}
+  };
+  x.onerror=function(){cb(new Error("Network "+path));};
+  x.send(null);
+}function splitNames(v){if(v==null)return[];if(Array.isArray(v))return v;return String(v).split(/[\n,;|]+/g).map(x=>x.trim()).filter(Boolean);}
+function membersOf(t){if(Array.isArray(t.members))return t.members;if(t.team_members)return splitNames(t.team_members);return [];}
+function isPair(t){var tt=String(t.team_type||t.team_size_category||"").toLowerCase();if(tt==="pair")return true;return membersOf(t).length===2;}
+function isThreePlus(t){var tt=String(t.team_type||t.team_size_category||"").toLowerCase();if(tt==="team")return true;return membersOf(t).length>=3;}
+var box=document.getElementById("teams");
+loadJson("data/faculty_index.json",function(e1,faculty){
+  if(e1){box.innerHTML="<pre>"+esc(String(e1))+"</pre>";return;}
+  loadJson("data/teams.json",function(e2,teams){
+    if(e2){box.innerHTML="<pre>"+esc(String(e2))+"</pre>";return;}
+    faculty=faculty||[];teams=teams||[];
+    var idByName={}; for(var i=0;i<faculty.length;i++)idByName[String(faculty[i].name||"").toLowerCase()]=faculty[i].id;
+    function mlink(name){var fid=idByName[String(name||"").toLowerCase()]||"";return fid?'<a href="profile.html?id='+encodeURIComponent(fid)+'">'+esc(name)+'</a>':esc(name);}
+    var keep=[];
+    for(var k=0;k<teams.length;k++){var t=teams[k]||{}; if("pair"==="pair" && isPair(t))keep.push(t); if("pair"==="team" && isThreePlus(t))keep.push(t);}
+    var html='<div style="opacity:.8;">Found: '+keep.length+'</div>';
+    for(var j=0;j<keep.length;j++){var t2=keep[j]||{};var m=membersOf(t2);var mhtml=m.map(mlink).join(", ");
+      html+='<div class="card" style="padding:16px; margin-top:12px;"><div style="font-weight:700;">'+esc(t2.team_name||t2.proposed_title||"")+'</div><div style="margin-top:8px;">'+mhtml+'</div></div>';
+    }
+    box.innerHTML=html;
+  });
+});
+})();</script>
+</body></html>

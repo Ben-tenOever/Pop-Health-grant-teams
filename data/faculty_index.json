@@ -1,0 +1,20 @@
+[
+  {
+    "id": "intake_hakhamanesh_mostafavi",
+    "name": "Hakhamanesh Mostafavi",
+    "title": "Assistant Professor",
+    "summary": "My lab studies the genetic basis of complex human traits and diseases. We use statistical genetics, population genetics, and large-scale genomic data to understand how genetic variation influences molecular and physiological traits, how evolutionary forces shape patterns of genetic variation, and how to draw biological insight from genetic association studies. My previous work has shown that natural selection constrains the detectable effects of disease-relevant regulatory variation, clarified why GWAS and rare-variant burden studies tend to identify different sets of genes, and demonstrated how demographic and environmental factors influence polygenic score performance even within a single ancestry group. I have also contributed to methods for detecting viability selection, estimating gene constraint, and reassessing signals of polygenic adaptation. Current projects include developing strategies to identify the most disease-relevant genes; modeling context-dependent genetic effects such as age- and sex-specific influences on LDL and other traits; building multivariate frameworks to decompose complex traits into meaningful physiological axes; and investigating the cell-type specificity of genetic effects. We are also working on conceptual problems related to interpreting association signals and understanding the limitations of using molecular traits—such as gene expression—as intermediates for complex-trait biology.",
+    "keywords": [],
+    "lab_synopsis": "My lab studies the genetic basis of complex human traits and diseases. We use statistical genetics, population genetics, and large-scale genomic data to understand how genetic variation influences molecular and physiological traits, how evolutionary forces shape patterns of genetic variation, and how to draw biological insight from genetic association studies. My previous work has shown that natural selection constrains the detectable effects of disease-relevant regulatory variation, clarified why GWAS and rare-variant burden studies tend to identify different sets of genes, and demonstrated how demographic and environmental factors influence polygenic score performance even within a single ancestry group. I have also contributed to methods for detecting viability selection, estimating gene constraint, and reassessing signals of polygenic adaptation. Current projects include developing strategies to identify the most disease-relevant genes; modeling context-dependent genetic effects such as age- and sex-specific influences on LDL and other traits; building multivariate frameworks to decompose complex traits into meaningful physiological axes; and investigating the cell-type specificity of genetic effects. We are also working on conceptual problems related to interpreting association signals and understanding the limitations of using molecular traits—such as gene expression—as intermediates for complex-trait biology.",
+    "tracks": [],
+    "specialty_areas": null,
+    "research_keywords": [],
+    "experimental_capabilities": [],
+    "model_systems": [],
+    "complementary_areas": [],
+    "publications": [],
+    "affiliations": [
+      "Population Health"
+    ]
+  }
+]

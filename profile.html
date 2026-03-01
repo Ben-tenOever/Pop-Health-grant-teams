@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>Pathology Faculty Profile</title>
+<link rel="stylesheet" href="teams.css">
+</head><body>
+
+<div class="container" style="max-width:1100px; margin:0 auto; padding:18px 16px;">
+  <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:baseline;">
+    <a href="index.html" style="text-decoration:none;">Home</a>
+    <a href="faculty.html" style="text-decoration:none;">Faculty profiles</a>
+    <a href="teams_two.html" style="text-decoration:none;">Pairs</a>
+    <a href="teams_three_plus.html" style="text-decoration:none;">Teams of three or more</a>
+  </div>
+</div>
+
+<main class="container page" style="max-width:1100px;">
+  <a href="faculty.html" class="back-link" style="text-decoration:none;">Back to Faculty</a>
+  <div id="profile"></div>
+</main>
+
+<script>
+(function(){
+  function esc(s){
+  s = String(s == null ? "" : s);
+  return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function loadJson(path, cb){
+  var x = new XMLHttpRequest();
+  x.open("GET", path + "?cb=" + Date.now(), true);
+  x.onreadystatechange = function(){
+    if (x.readyState !== 4) return;
+    if (x.status < 200 || x.status >= 300) return cb(new Error("Failed " + path + " " + x.status));
+    try { cb(null, JSON.parse(x.responseText)); } catch(e){ cb(new Error("Parse " + path + " " + e)); }
+  };
+  x.onerror = function(){ cb(new Error("Network " + path)); };
+  x.send(null);
+}
+  function qp(n) {
+    var m = new RegExp("[?&]"+n+"=([^&]+)").exec(location.search);
+    return m ? decodeURIComponent(m[1]) : "";
+  }
+  var id = qp("id");
+  var box = document.getElementById("profile");
+
+  function asList(v) {
+    if (!v) return [];
+    if (Array.isArray(v)) return v;
+    if (typeof v === "string") {
+      // split specialty areas like "A / B / C"
+      return v.split(/[\/;|]+/g).map(x=>x.trim()).filter(Boolean);
+    }
+    return [];
+  }
+
+  function section(title, inner) {
+    if (!inner) return "";
+    return '<div style="margin-top:16px; font-weight:650; color:var(--nyu-purple);">'+esc(title)+'</div>' + inner;
+  }
+
+  function pills(items) {
+    items = asList(items);
+    if (!items.length) return "";
+    return '<div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:8px;">' +
+      items.map(x => '<span class="pill pill-link" style="padding:4px 10px; border-radius:999px; opacity:.9;">'+esc(x)+'</span>').join("") +
+      '</div>';
+  }
+
+  function bullets(items) {
+    items = asList(items);
+    if (!items.length) return "";
+    return '<div class="card" style="padding:16px; margin-top:8px;"><ul style="margin:0; padding-left:18px;">' +
+      items.map(x => '<li style="margin-top:6px;">'+esc(x)+'</li>').join("") +
+      '</ul></div>';
+  }
+
+  loadJson("data/faculty_index.json", function(err, faculty) {
+    if (err) {
+      box.innerHTML = "<pre style='white-space:pre-wrap; padding:16px;'>" + esc(String(err)) + "</pre>";
+      return;
+    }
+    faculty = faculty || [];
+    var f = null;
+    for (var i=0;i<faculty.length;i++) {
+      if (String(faculty[i].id) === String(id)) { f = faculty[i]; break; }
+    }
+    if (!f) {
+      box.innerHTML = "<div class='card' style='padding:16px;'>Profile not found.</div>";
+      return;
+    }
+
+    var html = "";
+    html += "<h1 class='page-title' style='margin:12px 0 0 0; color:var(--nyu-purple);'>" + esc(f.name || "") + "</h1>";
+    html += "<div class='page-subtitle' style='opacity:.85; margin-top:6px;'>" + esc(f.title || "") + "</div>";
+    html += section("Affiliations", pills(f.affiliations));
+    html += section("Tracks", pills(f.tracks));
+    html += section("Specialty areas", pills(f.specialty_areas));
+
+    var syn = (f.lab_synopsis || f.summary || "").trim();
+    if (syn) {
+      html += section("Lab synopsis", '<div class="card" style="padding:16px; margin-top:8px; line-height:1.55;">'+esc(syn)+'</div>');
+    }
+
+    html += section("Common platforms and experiments", bullets(f.common_platforms_and_experiments || f.common_experiments_raw));
+    html += section("Research keywords", bullets(f.research_keywords));
+    html += section("Experimental capabilities", bullets(f.experimental_capabilities));
+    html += section("Model systems and disease focus", bullets(f.model_systems));
+    html += section("Complementary areas", bullets(f.complementary_areas));
+    html += section("Example grant directions", bullets(f.example_grant_directions));
+
+    // publications
+    var pubs = Array.isArray(f.publications) ? f.publications : [];
+    if (!pubs.length) {
+      html += section("Publications ingested", '<div class="card" style="padding:16px; margin-top:8px;">No publications ingested yet.</div>');
+    } else {
+      var rows = pubs.map(function(p){
+        if (typeof p === "string") return '<li style="margin-top:6px;">'+esc(p)+'</li>';
+        var line = (p.title ? p.title : '') +
+                   (p.year ? ' ('+p.year+')' : '') +
+                   (p.venue ? ' — '+p.venue : '') +
+                   (p.journal ? ' — '+p.journal : '') ;
+        return '<li style="margin-top:6px;">'+esc(line)+'</li>';
+      }).join("");
+      html += section("Publications ingested", '<div class="card" style="padding:16px; margin-top:8px;"><ul style="margin:0; padding-left:18px;">'+rows+'</ul></div>');
+    }
+
+    box.innerHTML = html;
+  });
+})();
+</script>
+
+</body></html>
